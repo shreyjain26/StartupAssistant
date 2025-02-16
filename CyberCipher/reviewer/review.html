@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚀 Startup SWOT Analyzer</title>
+    <link rel="stylesheet" href="review.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Loading Spinner -->
+    <div id="loading" class="hidden" style="display: none;">
+        <div class="spinner"></div>
+        <p>Analyzing your idea...</p>
+    </div>
+
+    <!-- Main Container -->
+    <div class="container">
+        <header>
+            <h1>🚀 Startup SWOT Analyzer</h1>
+            <p>Enter your business idea details and get a detailed SWOT analysis.</p>
+        </header>
+
+        <div class="input-section">
+            <input type="text" id="description" placeholder="📌 Business Idea Description">
+            <input type="text" id="industry" placeholder="🏢 Industry">
+            <input type="text" id="target_market" placeholder="🎯 Target Market">
+            <input type="text" id="usp" placeholder="⭐ Unique Selling Proposition (USP)">
+            <input type="text" id="problem" placeholder="❓ Problem Being Solved">
+            <button onclick="analyzeIdea()">Analyze Idea 🚀</button>
+        </div>
+
+        <div id="output" class="hidden">
+            <h2>🔍 SWOT Analysis Result</h2>
+            <div class="feasibility-section">
+                <p id="feasibility_score"></p>
+                <p id="reasoning"></p>
+            </div>
+
+            <div class="swot-grid">
+                <div class="swot-card strengths">
+                    <h3>✅ Strengths</h3>
+                    <ul id="strengths"></ul>
+                </div>
+                <div class="swot-card weaknesses">
+                    <h3>⚠ Weaknesses</h3>
+                    <ul id="weaknesses"></ul>
+                </div>
+                <div class="swot-card opportunities">
+                    <h3>🌟 Opportunities</h3>
+                    <ul id="opportunities"></ul>
+                </div>
+                <div class="swot-card threats">
+                    <h3>⚡ Threats</h3>
+                    <ul id="threats"></ul>
+                </div>
+            </div>
+        </div>
+
+        <div id="competition-results" class="hidden">
+            <h2>🔍 Competition Analysis</h2>
+            <div id="search-results"></div>
+        </div>
+    </div>
+
+    <script src="review.js"></script>
+</body>
+</html>

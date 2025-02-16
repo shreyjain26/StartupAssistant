@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Image Generator</title>
+    <style>
+        /* General Styles */
+        body {
+            font-family: "Poppins", sans-serif;
+            background-color: #000000;
+            color: #ffffff;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        /* Main Container */
+        .container {
+            width: 80%;
+            max-width: 900px;
+            text-align: center;
+            background: #1c1c1c;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 4px 15px rgba(255, 213, 0, 0.3);
+        }
+
+        /* Title */
+        h1 {
+            font-size: 32px;
+            color: #ffd500;
+            margin-bottom: 20px;
+        }
+
+        /* Input Field */
+        input {
+            width: 90%;
+            padding: 15px;
+            font-size: 18px;
+            border: none;
+            border-radius: 10px;
+            outline: none;
+            background: #ffffff;
+            color: #000;
+            margin-bottom: 20px;
+            text-align: center;
+            transition: 0.3s;
+        }
+
+        input:focus {
+            box-shadow: 0 0 10px #ffd500;
+        }
+
+        /* Generate Button */
+        .generate-btn {
+            background: #ffd500;
+            color: #000;
+            font-size: 18px;
+            padding: 14px 25px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: 0.3s;
+            font-weight: bold;
+        }
+
+        .generate-btn:hover {
+            background: #ffcc00;
+            transform: scale(1.05);
+        }
+
+        /* Status Message */
+        #statusMessage {
+            margin-top: 15px;
+            font-size: 16px;
+            font-style: italic;
+            color: #ffd500;
+        }
+
+        /* Generated Image */
+        .image-container {
+            margin-top: 20px;
+            display: none;
+            text-align: center;
+        }
+
+        img {
+            width: 100%;
+            max-width: 600px;
+            border-radius: 15px;
+            box-shadow: 0 6px 15px rgba(255, 213, 0, 0.4);
+            transition: 0.3s;
+        }
+
+        img:hover {
+            transform: scale(1.02);
+        }
+
+        /* Loader Animation */
+        .loader {
+            display: none;
+            margin-top: 20px;
+            width: 50px;
+            height: 50px;
+            border: 5px solid #ffffff;
+            border-top: 5px solid #ffd500;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>AI Logo Generator</h1>
+        <input type="text" id="prompt" placeholder="Describe your image...">
+        <br>
+        <button class="generate-btn" onclick="generateImage()">Generate</button>
+        
+        <div id="statusMessage"></div>
+        <div class="loader" id="loader"></div>
+
+        <div class="image-container" id="imageContainer">
+            <img id="generatedImage" src="" alt="Generated Image">
+        </div>
+    </div>
+
+    <script>
+        function generateImage() {
+            const prompt = document.getElementById("prompt").value;
+            const statusMessage = document.getElementById("statusMessage");
+            const loader = document.getElementById("loader");
+            const imageContainer = document.getElementById("imageContainer");
+            const generatedImage = document.getElementById("generatedImage");
+
+            // Show loading state
+            statusMessage.innerText = "Generating image... Please wait.";
+            loader.style.display = "block";
+            imageContainer.style.display = "none";
+
+            fetch("/generate", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ prompt: prompt })
+            })
+            .then(response => response.json())
+            .then(data => {
+                loader.style.display = "none";
+                if (data.success) {
+                    const timestamp = new Date().getTime();
+                    generatedImage.src = data.image_url + "?t=" + timestamp;
+                    imageContainer.style.display = "block";
+                    statusMessage.innerText = "Image generated successfully!";
+                } else {
+                    statusMessage.innerText = "Error: " + data.error;
+                }
+            })
+            .catch(error => {
+                loader.style.display = "none";
+                statusMessage.innerText = "Request failed. Try again.";
+                console.error("Error:", error);
+            });
+        }
+    </script>
+
+</body>
+</html>

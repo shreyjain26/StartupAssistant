@@ -1,0 +1,200 @@
+/* General Styles */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #101010;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+/* Main Container */
+.container {
+    display: flex;
+    width: 100%;
+    height: auto;
+    margin: 10px;
+    gap: 20px;
+}
+
+/* Agents Section (Left Sidebar) */
+/* Agents Section */
+.agents {
+    width: 10%;
+    background-color: #101010; /* Matches the sidebar */
+    color: whitesmoke;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.agents h2 {
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.agents ul {
+    list-style: none;
+    padding: 0;
+}
+
+.agents ul li {
+    padding: 12px;
+    margin: 8px 0;
+    border-radius: 8px;
+    text-align: center;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.agents ul li:hover {
+    background: rgba(255, 255, 255, 0.1); /* Light transparent white */
+    transform: scale(1.05); /* Slight pop effect */
+}
+
+
+/* Chat & History Section */
+.chat-container {
+    width: 80%;
+    display: flex;
+    background-color: #F5F5F5;
+    gap: 5px;
+    border-radius: 15px;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+    /* padding: 10px; */
+    height: 100%;
+    flex-grow: 1;
+}
+
+/* Chatbox */
+.chatbox {
+    width: 85%;
+    display: flex;
+    flex-direction: column;
+    border-radius: 15px;
+    background: #f7f7f7;
+    padding: 15px;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.chat-header {
+    font-size: 20px;
+    font-weight: bold;
+    /* margin-bottom: 5px; */
+    height: auto;
+}
+
+.chat-content {
+    flex-grow: 1;
+    padding: 10px;
+    overflow-y: auto;
+    border-radius: 10px;
+    background: #E0E0E0;
+    height: 66vh;
+}
+
+.chat-input {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.chat-input input {
+    flex-grow: 1;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+
+.chat-input button {
+    background-color: #ef6a36;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 50%;  /* Make it circular */
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 18px;
+}
+
+.chat-input button i {
+    font-size: 16px;
+}
+
+.chat-input button:hover {
+    background-color: #d45b2e;
+}
+
+/* History Section */
+.history {
+    width: 15%;
+    background: #E0E0E0;
+    padding: 15px;
+    border-radius: 15px;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.history h2 {
+    text-align: left;
+    margin-bottom: 15px;
+}
+
+.history ul {
+    list-style: none;
+    padding: 0;
+}
+
+/* Hover effect for History items */
+.history ul li {
+    padding: 10px;
+    background: #ffffff;
+    margin: 8px 0;
+    border-radius: 8px;
+    text-align: center;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.history ul li:hover {
+    background: rgba(0, 0, 0, 0.1); /* Light gray background */
+    transform: scale(1.05);
+}
+
+/* Chat messages container */
+.chat-content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* Align messages to the left by default */
+    padding: 10px;
+    overflow-y: auto;
+    border-radius: 10px;
+    background: #E0E0E0;
+    height: 66vh;
+}
+
+/* User message (left) */
+.user-message {
+    background: #ef6a36;
+    color: white;
+    align-self: flex-start;  /* Aligns to the left */
+    padding: 10px;
+    border-radius: 8px;
+    margin: 5px 0;
+    max-width: 80%;
+}
+
+/* Bot message (right) */
+.bot-message {
+    background: #ffffff;
+    color: black;
+    align-self: flex-end; /* Aligns to the right */
+    padding: 10px;
+    border-radius: 8px;
+    margin: 5px 0;
+    max-width: 80%;
+}

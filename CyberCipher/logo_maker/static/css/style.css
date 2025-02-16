@@ -1,0 +1,106 @@
+/* General Styles */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #1e1e1e;
+    color: #fff;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+  }
+  
+  .container {
+    max-width: 800px;
+    width: 100%;
+    padding: 20px;
+    background-color: #2a2a2a;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  }
+  
+  h1 {
+    color: #ffc800;
+    text-align: center;
+    margin-bottom: 10px;
+  }
+  
+  p {
+    text-align: center;
+    color: #ccc;
+    margin-bottom: 20px;
+  }
+  
+  /* Form Styles */
+  .form-container {
+    margin-bottom: 30px;
+  }
+  
+  label {
+    display: block;
+    margin-bottom: 10px;
+    color: #ffc800;
+  }
+  
+  textarea {
+    width: 100%;
+    padding: 10px;
+    border: 2px solid #ffc800;
+    border-radius: 5px;
+    background-color: #333;
+    color: #fff;
+    font-size: 16px;
+    resize: vertical;
+    min-height: 100px;
+  }
+  
+  button {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    background-color: #ffc800;
+    color: #1e1e1e;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  button:hover {
+    background-color: #e6b400;
+  }
+  
+  button:disabled {
+    background-color: #666;
+    cursor: not-allowed;
+  }
+  
+  /* Output Styles */
+  .output-container {
+    margin-top: 30px;
+  }
+  
+  h2 {
+    color: #ffc800;
+    margin-bottom: 10px;
+  }
+  
+  #logo-preview, #video-preview {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #333;
+    border: 2px solid #ffc800;
+    border-radius: 5px;
+    padding: 20px;
+    margin-bottom: 10px;
+  }
+  
+  #logo-preview img, #video-preview video {
+    max-width: 100%;
+    border-radius: 5px;
+  }

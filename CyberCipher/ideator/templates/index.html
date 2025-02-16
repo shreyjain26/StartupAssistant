@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Interface</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="/static/styles.css">
+    <style>
+        /* Highlight active chat tab */
+        .active-chat-tab {
+            background-color: grey;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Left Sidebar (Agents integrated into background) -->
+        <aside class="agents">
+            <div class="agents-content">
+                <h2>Agents</h2>
+                <ul>
+                    <li>Developer</li>
+                    <li>Tester</li>
+                    <li>Business Analyst</li>
+                    <li>Reviewer</li>
+                    <li>Architecture</li>
+                </ul>
+            </div>
+        </aside>
+ 
+        <!-- Chat and History Section -->
+        <div class="chat-container">
+            <!-- Chatbox -->
+            <div class="chatbox">
+                <div class="chat-header">
+                    <h2>Chatbot</h2>
+                    <button id="new-chat-button">New Chat</button>
+                </div>
+                <div class="chat-content" id="chat-content">
+                    <!-- Messages will appear here -->
+                </div>
+                <div class="chat-input">
+                    <input type="text" id="message" placeholder="Type a message...">
+                    <button id="send-button">
+                        <i class="fas fa-paper-plane"></i>  <!-- FontAwesome Icon -->
+                    </button>
+                </div>
+            </div>
+ 
+            <!-- Resizable Divider -->
+            <div class="resizer" id="resizer"></div>
+ 
+            <!-- History Section -->
+            <div class="history">
+                <h2>History</h2>
+                <ul id="chat-tabs">
+                    <!-- Chat tabs will appear here -->
+                </ul>
+            </div>
+        </div>
+    </div>
+ 
+    <script>
+// Global variables
+let currentSessionId = null;
+let activeChatTab = null;
+ 
+// Function to send a message to the backend
+async function sendMessage() {
+    const messageInput = document.getElementById("message");
+    const message = messageInput.value.trim();
+    if (!message || !currentSessionId) return;  // Prevent empty messages or no active session
+ 
+    // Add user message to the chat
+    const chatContent = document.getElementById("chat-content");
+    chatContent.innerHTML += `<div class="user-message">${message}</div>`;
+    messageInput.value = "";  // Clear input field
+   
+    // Auto-scroll to the latest message
+    chatContent.scrollTop = chatContent.scrollHeight;
+ 
+    // Send message to the backend
+    try {
+        const response = await fetch('http://127.0.0.1:5000/chat', {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ message: message, session_id: currentSessionId })
+        });
+ 
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+ 
+        const data = await response.json();
+        console.log("Chat initiated:", data);
+    } catch (error) {
+        console.error("Error sending message:", error);
+        chatContent.innerHTML += `<div class="error-message">Failed to send message.</div>`;
+    }
+}
+ 
+// Function to create a new chat session
+async function createNewChat() {
+    const sessionId = `session_${Date.now()}`;  // Generate a unique session ID
+    const response = await fetch('http://127.0.0.1:5000/new_chat', {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ session_id: sessionId, session_name: "New Chat" })
+    });
+    const data = await response.json();
+   
+    // Create and add the new tab
+    addChatTab(sessionId, data.session_name);
+   
+    // Switch to the new chat
+    switchChat(sessionId);
+}
+ 
+// Function to add a new chat tab
+function addChatTab(sessionId, sessionName) {
+    const chatTabs = document.getElementById("chat-tabs");
+    const tab = document.createElement("li");
+    tab.dataset.sessionId = sessionId;
+   
+    // Create tab content container
+    const tabContent = document.createElement("div");
+    tabContent.className = "tab-content";
+   
+    // Add session name
+    const nameSpan = document.createElement("span");
+    nameSpan.textContent = sessionName;
+    tabContent.appendChild(nameSpan);
+   
+    // Add buttons container
+    const buttonsContainer = document.createElement("div");
+    buttonsContainer.className = "tab-buttons";
+   
+    // Add rename button
+    const renameButton = document.createElement("button");
+    renameButton.innerHTML = "✏️";
+    renameButton.className = "tab-button rename";
+    renameButton.onclick = (e) => {
+        e.stopPropagation();
+        const newName = prompt("Enter a new name for the chat:", sessionName);
+        if (newName) renameChat(sessionId, newName);
+    };
+   
+    // Add delete button
+    const deleteButton = document.createElement("button");
+    deleteButton.innerHTML = "🗑️";
+    deleteButton.className = "tab-button delete";
+    deleteButton.onclick = (e) => {
+        e.stopPropagation();
+        if (confirm("Are you sure you want to delete this chat?")) {
+            deleteChat(sessionId);
+        }
+    };
+   
+    // Add buttons to container
+    buttonsContainer.appendChild(renameButton);
+    buttonsContainer.appendChild(deleteButton);
+    tabContent.appendChild(buttonsContainer);
+   
+    // Add click handler to the tab
+    tab.onclick = () => switchChat(sessionId);
+   
+    // Add the complete tab to the list
+    tab.appendChild(tabContent);
+    chatTabs.insertBefore(tab, chatTabs.firstChild);  // Add new tab at the top
+   
+    return tab;
+}
+ 
+// Function to switch between chat sessions
+async function switchChat(sessionId) {
+    if (currentSessionId === sessionId) return;  // Already on this chat
+   
+    currentSessionId = sessionId;
+    const chatContent = document.getElementById("chat-content");
+    chatContent.innerHTML = "";  // Clear current chat content
+   
+    // Update active tab highlighting
+    const allTabs = document.querySelectorAll("#chat-tabs li");
+    allTabs.forEach(tab => tab.classList.remove("active-chat-tab"));
+    const newActiveTab = document.querySelector(`li[data-session-id="${sessionId}"]`);
+    if (newActiveTab) {
+        newActiveTab.classList.add("active-chat-tab");
+        activeChatTab = newActiveTab;
+    }
+   
+    // Load chat history
+    try {
+        const response = await fetch('http://127.0.0.1:5000/load_chat', {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ session_id: sessionId })
+        });
+       
+        const data = await response.json();
+       
+        // Display chat history
+        data.messages.forEach(msg => {
+            if (msg.agent === "User") {
+                chatContent.innerHTML += `<div class="user-message">${msg.message}</div>`;
+            } else {
+                chatContent.innerHTML += `<div class="bot-message"><strong>${msg.agent}:</strong> ${msg.message}</div>`;
+            }
+        });
+       
+        // Auto-scroll to the latest message
+        chatContent.scrollTop = chatContent.scrollHeight;
+    } catch (error) {
+        console.error("Error loading chat history:", error);
+        chatContent.innerHTML = '<div class="error-message">Failed to load chat history.</div>';
+    }
+}
+ 
+// Function to delete a chat session
+async function deleteChat(sessionId) {
+    try {
+        const response = await fetch('http://127.0.0.1:5000/delete_chat', {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ session_id: sessionId })
+        });
+       
+        if (!response.ok) throw new Error('Failed to delete chat');
+       
+        // Remove the tab from UI
+        const tab = document.querySelector(`li[data-session-id="${sessionId}"]`);
+        if (tab) tab.remove();
+       
+        // If we deleted the active chat, switch to another chat or create a new one
+        if (currentSessionId === sessionId) {
+            const remainingTab = document.querySelector("#chat-tabs li");
+            if (remainingTab) {
+                switchChat(remainingTab.dataset.sessionId);
+            } else {
+                createNewChat();  // No chats left, create a new one
+            }
+        }
+    } catch (error) {
+        console.error("Error deleting chat:", error);
+        alert("Failed to delete chat session");
+    }
+}
+ 
+// Function to rename a chat session
+async function renameChat(sessionId, newName) {
+    try {
+        const response = await fetch('http://127.0.0.1:5000/rename_chat', {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ session_id: sessionId, new_name: newName })
+        });
+       
+        if (!response.ok) throw new Error('Failed to rename chat');
+       
+        // Update tab name in UI
+        const tab = document.querySelector(`li[data-session-id="${sessionId}"]`);
+        if (tab) {
+            const nameSpan = tab.querySelector("span");
+            if (nameSpan) nameSpan.textContent = newName;
+        }
+    } catch (error) {
+        console.error("Error renaming chat:", error);
+        alert("Failed to rename chat session");
+    }
+}
+ 
+// Function to fetch real-time messages from the backend
+function fetchAgentMessages() {
+    const eventSource = new EventSource("/chat_stream");
+   
+    eventSource.onmessage = function(event) {
+        const messageData = JSON.parse(event.data);
+        if (messageData.session_id === currentSessionId) {
+            const chatContent = document.getElementById("chat-content");
+            chatContent.innerHTML += `<div class="bot-message"><strong>${messageData.agent}:</strong> ${messageData.message}</div>`;
+            chatContent.scrollTop = chatContent.scrollHeight;
+        }
+    };
+   
+    eventSource.onerror = function() {
+        console.error("SSE connection lost. Attempting to reconnect...");
+        eventSource.close();
+        setTimeout(fetchAgentMessages, 3000);
+    };
+}
+ 
+// Initialize the chat interface
+document.addEventListener('DOMContentLoaded', function() {
+    // Attach event listeners
+    document.getElementById("send-button").addEventListener("click", sendMessage);
+    document.getElementById("new-chat-button").addEventListener("click", createNewChat);
+    document.getElementById("message").addEventListener("keypress", function(event) {
+        if (event.key === "Enter") {
+            sendMessage();
+        }
+    });
+   
+    // Create initial chat if none exists
+    if (!document.querySelector("#chat-tabs li")) {
+        createNewChat();
+    }
+   
+    // Start fetching real-time messages
+    fetchAgentMessages();
+});
+    </script>
+</body>
+</html>
+ 
